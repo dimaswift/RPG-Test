@@ -21,6 +21,8 @@ namespace RPG.View
 
         [SerializeField] BattleView _battleView;
 
+        [SerializeField] HeroCollectionView _heroCollectionView;
+
         void Awake()
         {
             Init();
@@ -33,7 +35,10 @@ namespace RPG.View
             foreach (var view in views)
             {
                 view.Init(this);
+                view.Hide();
             }
+            _heroCollectionView.SetUp(Controller.HeroesCollectionManager.GetDeck());
+            _heroCollectionView.Show();
             StartNextBattle();
         }
 

@@ -9,12 +9,14 @@ namespace RPG.Controller
         readonly List<HeroState> _deck;
         readonly GameConfig _config;
         readonly UnitFactory _unitFactory;
+        readonly IRandomRange _randomRange;
         
         public HeroesCollectionManager(GameConfig config, 
             IEnumerable<HeroState> deck, 
             IEnumerable<UnitConfig> collection, 
-            UnitFactory unitFactory)
+            UnitFactory unitFactory, IRandomRange randomRange)
         {
+            _randomRange = randomRange;
             _unitFactory = unitFactory;
             _config = config;
             _deck = new List<HeroState>(deck);
@@ -25,6 +27,19 @@ namespace RPG.Controller
                     continue;
                 _collection.Add(unitConfig.Name, unitConfig);
             }
+
+            if (_collection.Count == 0)
+            {
+                GenerateRandomCollection();
+            }
+            
+            if (_deck.Count == 0)
+            {
+                for (int i = 0; i < config.InitialDeckSize; i++)
+                {
+                    AddNewHeroToTheDeck();
+                }
+            }
         }
 
         public UnitConfig GetConfig(string name)
@@ -32,26 +47,27 @@ namespace RPG.Controller
             return _collection.ContainsKey(name) ? _collection[name] : null;
         }
 
-        public void GenerateRandomCollection(IRandomRange randomRange)
+        public void GenerateRandomCollection()
         {
             
             for (int i = 0; i < _config.MaxHeroesCollectionSize; i++)
             {
                 var hero = new UnitConfig();
+                hero.Name = GetRandomHeroName();
                 while (_collection.ContainsKey(hero.Name))
                 {
-                    hero.Name = GetRandomHeroName(randomRange);
+                    hero.Name = GetRandomHeroName();
                 }
                 hero.Attributes = _unitFactory.GetRandomAttributes(_config.HeroGeneratorConfig, 1);
-                hero.VisualIndex = randomRange.Range(0, _config.UnitVisualsAmount);
+                hero.VisualIndex = _randomRange.Range(0, _config.UnitVisualsAmount);
                 _collection.Add(hero.Name, hero);
             }
             
         }
 
-        string GetRandomHeroName(IRandomRange randomRange)
+        string GetRandomHeroName()
         {
-            return "Hero " + randomRange.Range(0, 1000);
+            return "Hero " + _randomRange.Range(0, 1000);
         }
 
         public void AddNewHeroToTheDeck()

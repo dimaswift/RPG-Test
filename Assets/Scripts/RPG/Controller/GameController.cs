@@ -19,7 +19,8 @@ namespace RPG.Controller
             Config = config;
             PlayerProfile = profileProvider.LoadProfile();
             UnitFactory =  new UnitFactory(randomRange, config);
-            HeroesCollectionManager = new HeroesCollectionManager(Config, PlayerProfile.Deck, PlayerProfile.Collection, UnitFactory);
+            HeroesCollectionManager = new HeroesCollectionManager(Config, PlayerProfile.Deck, PlayerProfile.Collection, UnitFactory, randomRange);
+            SaveProfile();
         }
 
         public void SaveProfile()

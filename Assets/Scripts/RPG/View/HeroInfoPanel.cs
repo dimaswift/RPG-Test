@@ -22,16 +22,16 @@ namespace RPG.View
 			_state = state;
 			Render();
 		}
-
+		
 		public override void Render()
 		{
 			if(_state == null)
 				return;
-			_nameText.text = _state.Name;
-			_levelText.text = _state.Level.ToString();
-			_experienceText.text = _state.Experience.ToString();
-			_attackText.text = _state.Attributes.Attack.ToString("0.00");
-			_hpText.text = _state.Attributes.Hp.ToString("0.00");
+			_nameText.text = string.Format("Name: {0}",_state.Name);
+			_levelText.text = string.Format("Level: {0}",_state.Level);
+			_experienceText.text = string.Format("Epx: {0}",_state.Experience);
+			_attackText.text = string.Format("Attack: {0}",_state.Attributes.Attack);
+			_hpText.text = string.Format("Hp: {0}",_state.Attributes.Hp);
 		}
 	}
 
