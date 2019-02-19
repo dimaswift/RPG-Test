@@ -6,5 +6,6 @@ namespace RPG.Controller
     {
         PlayerProfile LoadProfile();
         void SaveProfile(PlayerProfile profile);
+        void Delete();
     }
 }

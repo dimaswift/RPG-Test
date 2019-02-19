@@ -9,8 +9,8 @@ namespace RPG.Controller
         
         public readonly GameConfig Config;
         public readonly PlayerProfile PlayerProfile;
-        public readonly UnitFactory UnitFactory;
-        public readonly HeroesCollectionManager HeroesCollectionManager;
+        public readonly HeroesCollectionManager CollectionManager;
+        public readonly DeckManager DeckManager;
         readonly IProfileProvider _profileProvider;
         
         public GameController(GameConfig config, IProfileProvider profileProvider, IRandomRange randomRange)
@@ -18,8 +18,16 @@ namespace RPG.Controller
             _profileProvider = profileProvider;
             Config = config;
             PlayerProfile = profileProvider.LoadProfile();
-            UnitFactory =  new UnitFactory(randomRange, config);
-            HeroesCollectionManager = new HeroesCollectionManager(Config, PlayerProfile.Deck, PlayerProfile.Collection, UnitFactory, randomRange);
+            if (PlayerProfile.Collection.Count == 0)
+            {
+                PlayerProfile.Collection = HeroesCollectionManager.CreateRandomCollection(config, randomRange);
+            }
+            CollectionManager = new HeroesCollectionManager(Config, PlayerProfile.Collection, randomRange);
+            if (PlayerProfile.Deck.Count == 0)
+            {
+                PlayerProfile.Deck = CollectionManager.CreateDeck(config.InitialDeckSize);
+            }
+            DeckManager = new DeckManager(PlayerProfile.Deck);
             SaveProfile();
         }
 
@@ -39,10 +47,10 @@ namespace RPG.Controller
             var battleSnapshot = new BattleSnapshot(1);
             battleSnapshot.Heroes = new List<HeroState>(PlayerProfile.Deck);
             battleSnapshot.Enemies = new List<UnitState>(Config.EnemiesAmount);
-            var enemyConfig = UnitFactory.CreateRandomEnemyConfig(1);
+            var enemyConfig = CollectionManager.CreateRandomEnemyConfig(1);
             for (int i = 0; i < Config.EnemiesAmount; i++)
             {
-                battleSnapshot.Enemies.Add(UnitFactory.CreateState(1, enemyConfig));
+                battleSnapshot.Enemies.Add(CollectionManager.CreateState(1, enemyConfig));
             }
             StartBattle(battleSnapshot);
         }
@@ -70,7 +78,7 @@ namespace RPG.Controller
             var heroes = new List<HeroController>(heroStates.Count);
             foreach (var heroState in heroStates)
             {
-                var heroConfig = HeroesCollectionManager.GetConfig(heroState.Name);
+                var heroConfig = CollectionManager.GetConfig(heroState.Name);
                 var heroController = new HeroController(heroConfig, heroState, Config);
                 heroes.Add(heroController);
             }
@@ -80,7 +88,7 @@ namespace RPG.Controller
         List<UnitController> CreateEnemies(ICollection<UnitState> enemyStates, int level)
         {
             var enemies = new List<UnitController>(enemyStates.Count);
-            var config = UnitFactory.CreateRandomEnemyConfig(level);
+            var config = CollectionManager.CreateRandomEnemyConfig(level);
             foreach (var enemyState in enemyStates)
             {
                 
@@ -95,8 +103,8 @@ namespace RPG.Controller
             PlayerProfile.BattlesPlayed++;
             if (PlayerProfile.BattlesPlayed % Config.FreeHeroPrizeFrequency == 0)
             {
-                HeroesCollectionManager.AddNewHeroToTheDeck();
-                PlayerProfile.Deck = HeroesCollectionManager.GetDeck();
+                DeckManager.AddNewHeroToTheDeck(CollectionManager);
+                PlayerProfile.Deck = new List<HeroState>(DeckManager.GetDeck());
                 SaveProfile();
             }
         }

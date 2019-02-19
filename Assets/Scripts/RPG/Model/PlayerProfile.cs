@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace RPG.Model
 {
+	[Serializable]
 	public class PlayerProfile
 	{
 		public BattleSnapshot LastBattleSnapshot;

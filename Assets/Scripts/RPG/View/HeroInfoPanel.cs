@@ -28,7 +28,7 @@ namespace RPG.View
 			if(_state == null)
 				return;
 			_nameText.text = string.Format("Name: {0}",_state.Name);
-			_levelText.text = string.Format("Level: {0}",_state.Level);
+			_levelText.text = string.Format("Level: {0}",_state.Level + 1);
 			_experienceText.text = string.Format("Epx: {0}",_state.Experience);
 			_attackText.text = string.Format("Attack: {0}",_state.Attributes.Attack);
 			_hpText.text = string.Format("Hp: {0}",_state.Attributes.Hp);

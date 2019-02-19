@@ -11,7 +11,7 @@ namespace RPG.Controller
         public PlayerPrefsProfileProvider(string key, PlayerProfile defaultProfile = null)
         {
             _key = key;
-            _defaultProfile = null;
+            _defaultProfile = defaultProfile;
         }
         
         public PlayerProfile LoadProfile()
@@ -31,7 +31,13 @@ namespace RPG.Controller
 
         public void SaveProfile(PlayerProfile profile)
         {
-            PlayerPrefs.GetString(_key, JsonUtility.ToJson(profile));
+            PlayerPrefs.SetString(_key, JsonUtility.ToJson(profile));
+            PlayerPrefs.Save();
+        }
+
+        public void Delete()
+        {
+            PlayerPrefs.DeleteKey(_key);
             PlayerPrefs.Save();
         }
     }

@@ -38,7 +38,12 @@ namespace RPG.View
             foreach (var heroState in heroes)
             {
                 var card = i < _cards.Count ? _cards[i] : AddNewCard();
-                var heroConfig = Game.Controller.HeroesCollectionManager.GetConfig(heroState.Name);
+                var heroConfig = Game.Controller.CollectionManager.GetConfig(heroState.Name);
+                if (heroConfig == null)
+                {
+                    Debug.LogError("no config with name " + heroState.Name);
+                    continue;
+                }
                 card.SetUp(heroConfig, heroState, this);
                 i++;
             }

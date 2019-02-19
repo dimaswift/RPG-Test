@@ -5,103 +5,108 @@ namespace RPG.Controller
 {
     public class HeroesCollectionManager
     {
-        readonly Dictionary<string, UnitConfig> _collection;
-        readonly List<HeroState> _deck;
+        readonly List<UnitConfig> _collection;
         readonly GameConfig _config;
-        readonly UnitFactory _unitFactory;
         readonly IRandomRange _randomRange;
         
         public HeroesCollectionManager(GameConfig config, 
-            IEnumerable<HeroState> deck, 
             IEnumerable<UnitConfig> collection, 
-            UnitFactory unitFactory, IRandomRange randomRange)
+            IRandomRange randomRange)
         {
             _randomRange = randomRange;
-            _unitFactory = unitFactory;
             _config = config;
-            _deck = new List<HeroState>(deck);
-            _collection = new Dictionary<string, UnitConfig>();
-            foreach (var unitConfig in collection)
-            {
-                if(_collection.ContainsKey(unitConfig.Name))
-                    continue;
-                _collection.Add(unitConfig.Name, unitConfig);
-            }
-
-            if (_collection.Count == 0)
-            {
-                GenerateRandomCollection();
-            }
-            
-            if (_deck.Count == 0)
-            {
-                for (int i = 0; i < config.InitialDeckSize; i++)
-                {
-                    AddNewHeroToTheDeck();
-                }
-            }
+            _collection = new List<UnitConfig>(collection);
         }
 
         public UnitConfig GetConfig(string name)
         {
-            return _collection.ContainsKey(name) ? _collection[name] : null;
+            foreach (var config in _collection)
+            {
+                if (config.Name == name)
+                    return config;
+            }
+
+            return null;
         }
 
-        public void GenerateRandomCollection()
+        public static List<UnitConfig> CreateRandomCollection(GameConfig config, IRandomRange randomRange)
         {
-            
-            for (int i = 0; i < _config.MaxHeroesCollectionSize; i++)
+            var collection = new List<UnitConfig>();
+            var visualIndexList = new List<int>();
+            for (int i = 0; i < config.UnitVisualsAmount; i++)
+            {
+                visualIndexList.Add(i);
+            }
+
+            var visualIndex = 0;
+            visualIndexList.Sort((v1, v2) => randomRange.Range(-1, 2));
+            for (int i = 0; i < config.MaxHeroesCollectionSize; i++)
             {
                 var hero = new UnitConfig();
-                hero.Name = GetRandomHeroName();
-                while (_collection.ContainsKey(hero.Name))
+                hero.Name = GetRandomHeroName(randomRange);
+                while (collection.Find(h => hero.Name == h.Name) != null)
                 {
-                    hero.Name = GetRandomHeroName();
+                    hero.Name = GetRandomHeroName(randomRange);
                 }
-                hero.Attributes = _unitFactory.GetRandomAttributes(_config.HeroGeneratorConfig, 1);
-                hero.VisualIndex = _randomRange.Range(0, _config.UnitVisualsAmount);
-                _collection.Add(hero.Name, hero);
+                
+                hero.Attributes = GetRandomAttributes(config.HeroGeneratorConfig, randomRange, 1);
+                visualIndex++;
+                if (visualIndex >= visualIndexList.Count)
+                    visualIndex = 0;
+                hero.VisualIndex = visualIndexList[visualIndex];
+                
+                collection.Add(hero);
             }
-            
+
+            return collection;
+        }
+        
+
+        public static UnitAttributes GetRandomAttributes(RandomUnitGeneratorConfig generatorConfig, IRandomRange randomRange, int multiplier)
+        {
+            return new UnitAttributes()
+            {
+                Attack = randomRange.Range(generatorConfig.MinAttack, generatorConfig.MaxAttack) * multiplier,
+                Hp = randomRange.Range(generatorConfig.MinHp, generatorConfig.MaxHp) * multiplier,
+            };
         }
 
-        string GetRandomHeroName()
+        public UnitAttributes GetLeveledAttributes(UnitConfig config, int level)
         {
-            return "Hero " + _randomRange.Range(0, 1000);
+            return new UnitAttributes()
+            {
+                Attack =  config.Attributes.Attack + level * _config.AttackLevelUpMultiplier,
+                Hp = config.Attributes.Hp + level * _config.AttackLevelUpMultiplier
+            };
+        }
+		
+        public UnitConfig CreateRandomEnemyConfig(int level)
+        {
+            var enemyConfig = new UnitConfig();
+            enemyConfig.Attributes = GetRandomAttributes(_config.EnemyGeneratorConfig, _randomRange, level);
+            enemyConfig.VisualIndex = _randomRange.Range(0, _config.UnitVisualsAmount);
+            return enemyConfig;
+        }
+		
+        public UnitState CreateState(int level, UnitConfig config)
+        {
+            var state = new UnitState();
+            state.Attributes = GetLeveledAttributes(config, level);
+            state.Name = "Enemy LVL " + (level + 1);
+            return state;
         }
 
-        public void AddNewHeroToTheDeck()
+        static string GetRandomHeroName(IRandomRange randomRange)
         {
-            UnitConfig config = null;
-            foreach (var unitConfig in _collection)
-            {
-                if (_deck.Find(u => u.Name == unitConfig.Key) == null)
-                {
-                    config = unitConfig.Value;
-                    break;
-                }
-            }
-
-            if (config == null)
-            {
-                return;
-            }
-            var state = new HeroState();
-            state.Attributes = config.Attributes;
-            _deck.Add(state);
+            return "Hero " + randomRange.Range(0, 1000);
         }
 
         public IEnumerable<UnitConfig> GetCollection()
         {
             foreach (var config in _collection)
             {
-                yield return config.Value;
+                yield return config;
             }
-        }
-        
-        public List<HeroState> GetDeck()
-        {
-            return _deck;
         }
 
         public HeroState AddExperienceToHero(HeroState state)
@@ -118,6 +123,25 @@ namespace RPG.Controller
 
             return state;
         }
-        
+
+        public List<HeroState> CreateDeck(int size)
+        {
+            var deck = new List<HeroState>();
+            for (int i = 0; i < size; i++)
+            {
+   
+                if (i >= _collection.Count)
+                {
+                    break;
+                }
+                var config = _collection[i];
+                var state = new HeroState();
+                state.Name = config.Name;
+                state.Attributes = GetRandomAttributes(_config.HeroGeneratorConfig, _randomRange, 1);
+                deck.Add(state);
+            }
+
+            return deck;
+        }
     }
 }

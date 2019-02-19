@@ -35,6 +35,7 @@ namespace RPG.View
             _state = state;
             _unitConfig = hero;
             _collectionView = collectionView;
+            gameObject.SetActive(true);
             Render();
         }
 
@@ -44,6 +45,9 @@ namespace RPG.View
             _isEmpty = true;
             _unitBodyImage.gameObject.SetActive(false);
             _emptySlotImage.gameObject.SetActive(true);
+            _selectionFrame.gameObject.SetActive(false);
+            gameObject.SetActive(true);
+            
         }
         
         public bool Selected
@@ -87,6 +91,7 @@ namespace RPG.View
         {
             yield return new WaitForSeconds(3);
             _collectionView.ShowHeroInfo(this);
+            print("ass");
             StopWaitForShowInfo();
         }
 

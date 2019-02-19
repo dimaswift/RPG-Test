@@ -1,5 +1,8 @@
-﻿namespace RPG.Model
+﻿using System;
+
+namespace RPG.Model
 {
+	[Serializable]
 	public class UnitConfig
 	{
 		public UnitAttributes Attributes;
