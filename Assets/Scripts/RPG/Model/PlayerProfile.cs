@@ -6,9 +6,7 @@ namespace RPG.Model
 	[Serializable]
 	public class PlayerProfile
 	{
-		public BattleSnapshot LastBattleSnapshot;
-		public List<HeroState> Deck = new List<HeroState>();
-		public List<UnitConfig> HeroCollection = new List<UnitConfig>();
+		public List<HeroData> Deck = new List<HeroData>();
 		public int BattlesPlayed;
 	}
 }

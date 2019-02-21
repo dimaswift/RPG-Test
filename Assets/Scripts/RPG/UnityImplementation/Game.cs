@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using RPG.Controller;
 using RPG.Model;
-using RPG.View;
 using UnityEngine;
 
-namespace ViewImplementation
+namespace RPG.UnityImplementation
 {
     public class Game : MonoBehaviour
     {
@@ -12,8 +10,11 @@ namespace ViewImplementation
         {
             get { return _config; }
         }
-        
-        public GameController Controller { get; private set; }
+
+        public TextDropController TextDropController
+        {
+            get { return _textDropController; }
+        }
 
         public HeroCollectionView HeroCollectionView
         {
@@ -33,6 +34,10 @@ namespace ViewImplementation
 
         [SerializeField] HeroCollectionView _heroCollectionView;
 
+        [SerializeField] TextDropController _textDropController;
+        
+        GameController _controller;
+
         void Awake()
         {
             Init();
@@ -42,7 +47,7 @@ namespace ViewImplementation
         {
             var profileProvider = new PlayerPrefsProfileProvider("profile");
             profileProvider.Delete();
-            Controller = new GameController(_config, profileProvider, new UnityRandom());
+            _controller = new GameController(_config, profileProvider, new UnityRandom());
 
             var views = FindObjectsOfType<View>();
             
@@ -51,8 +56,8 @@ namespace ViewImplementation
                 view.Init(this);
                 view.Hide();
             }
-            
-            _heroCollectionView.SetUp(Controller.DeckManager.GetDeck());
+
+            _heroCollectionView.SetUp(_controller.PlayerProfile.Deck);
             
             _heroCollectionView.Show();
         }
@@ -67,7 +72,13 @@ namespace ViewImplementation
         public void StartNextBattle()
         {
             _heroCollectionView.Hide();
-            Controller.StartBattle(_battleView);
+            _controller.StartBattle(_battleView);
+        }
+
+        void OnApplicationQuit()
+        {
+            if (_controller != null)
+                _controller.SaveProfile();
         }
 
         public class UnityRandom : IRandomRange
@@ -81,7 +92,7 @@ namespace ViewImplementation
         public void ShowCollectionMenu()
         {
             _battleView.Hide();
-            _heroCollectionView.SetUp(Controller.DeckManager.GetDeck());
+            _heroCollectionView.SetUp(_controller.PlayerProfile.Deck);
             _heroCollectionView.Show();
         }
     }

@@ -3,7 +3,7 @@
 namespace RPG.Model
 {
 	[Serializable]
-	public class HeroState : UnitState
+	public class HeroData : UnitData
 	{
 		public int Experience;
 		public int Level;

@@ -3,10 +3,11 @@
 namespace RPG.Model
 {
 	[Serializable]
-	public class UnitConfig
+	public class UnitData
 	{
-		public UnitAttributes Attributes;
+		public string Name;
+		public float Hp;
+		public float Attack;
 		public int VisualIndex;
-		public string Id;
 	}
 }

@@ -1,36 +1,44 @@
 ﻿using RPG.Model;
-using RPG.View;
 
 namespace RPG.Controller
 {
+	public delegate void LevelUpHandler(float extraHp, float extraAttack);
+	
 	public class HeroController : UnitController
 	{
-		readonly GameConfig _gameConfig;
+		public event LevelUpHandler OnLevelUp;
 		
-		public HeroState HeroState
+		public HeroData HeroData
 		{
 			get
 			{
-				return State as HeroState;
+				return Data as HeroData;
 			}
-			set { State = value; }
 		}
+
+		readonly int _xpPerLevel;
+		readonly float _levelUpStatMultiplier;
 		
-		public HeroController(UnitConfig config, HeroState state, GameConfig gameConfig) : base(config, state)
+		public HeroController(HeroData data, int xpPerLevel, float levelUpStatMultiplier) : base(data)
 		{
-			_gameConfig = gameConfig;
+			_levelUpStatMultiplier = levelUpStatMultiplier;
+			_xpPerLevel = xpPerLevel;
 		}
 
 		public void AddExperience()
 		{
-			HeroState.Experience++;
+			HeroData.Experience++;
 
-			while (HeroState.Experience >= _gameConfig.ExperiencePointsPerLevel)
+			while (HeroData.Experience >= _xpPerLevel)
 			{
-				HeroState.Experience -= _gameConfig.ExperiencePointsPerLevel;
-				HeroState.Level++;
-				HeroState.Attributes.Hp += _gameConfig.HpLevelUpMultiplier *  HeroState.Attributes.Hp;
-				HeroState.Attributes.Attack += _gameConfig.AttackLevelUpMultiplier * HeroState.Attributes.Attack;
+				HeroData.Experience -= _xpPerLevel;
+				var oldAttack = HeroData.Attack;
+				var oldHp = HeroData.Hp;
+				HeroData.Attack += HeroData.Attack * _levelUpStatMultiplier;
+				HeroData.Hp += HeroData.Hp * _levelUpStatMultiplier;
+				HeroData.Level++;
+				if (OnLevelUp != null)
+					OnLevelUp(HeroData.Hp - oldHp, HeroData.Attack - oldAttack);
 			}
 		}
 	}

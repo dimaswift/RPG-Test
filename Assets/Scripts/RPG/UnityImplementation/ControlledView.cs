@@ -1,4 +1,4 @@
-namespace ViewImplementation
+namespace RPG.UnityImplementation
 {
     public abstract class ControlledView<TController> : View
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ViewImplementation
+namespace RPG.UnityImplementation
 {
     public class HealthBarView : MonoBehaviour
     {

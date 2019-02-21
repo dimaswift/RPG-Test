@@ -1,7 +1,8 @@
+using RPG.Controller;
 using RPG.Model;
 using UnityEngine;
 
-namespace RPG.Controller
+namespace RPG.UnityImplementation
 {
     public class PlayerPrefsProfileProvider : IProfileProvider
     {

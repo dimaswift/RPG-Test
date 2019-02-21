@@ -2,33 +2,30 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using RPG.Controller;
-using RPG.Model;
 using RPG.View;
 using UnityEngine;
+using UnityEngine.UI;
 
-namespace ViewImplementation
+namespace RPG.UnityImplementation
 {
     public class BattleView : View, IBattleView
     {
         [SerializeField] UnitView[] _enemies;
         [SerializeField] UnitView[] _heroes;
-        [SerializeField] GameObject _victoryWindow;
-        [SerializeField] GameObject _defeatWindow;
+        [SerializeField] GameObject _gameOverWindow;
+        [SerializeField] Text _gameOverMessageText;
         [SerializeField] AnimationCurve _attackCurve;
+        [SerializeField] HeroInfoPanel _infoPanel;
+        
         [SerializeField] float _attackTime = .5f;
 
-        public event Action<HeroState> OnHeroTap;
+        public event Action<HeroController> OnHeroTap;
         
         readonly List<UnitView> _activeUnitViews = new List<UnitView>();
 
-       
-        
         public override void Render()
         {
-            foreach (var unitView in _activeUnitViews)
-            {
-                unitView.Render();
-            }
+
         }
 
         public void StartAttack(UnitController attacker,
@@ -43,18 +40,30 @@ namespace ViewImplementation
 
         public void ProcessDefeat()
         {
-            _defeatWindow.SetActive(true);
+            StartCoroutine(WaitForAction(() => ShowResult("DEFEAT", Color.red)));
+        }
+
+        void ShowResult(string message, Color color)
+        {
+            _gameOverMessageText.text = message;
+            _gameOverMessageText.color = color;
+            _gameOverWindow.SetActive(true);
         }
 
         public void ProcessVictory()
         {
-            _victoryWindow.SetActive(true);
+            StartCoroutine(WaitForAction(() => ShowResult("VICTORY", Color.green)));
+        }
+
+        IEnumerator WaitForAction(Action result)
+        {
+            yield return new WaitForSeconds(1);
+            result();
         }
 
         public void PrepareBattle(IEnumerable<HeroController> heroes, IEnumerable<UnitController> enemies)
         {
-            _defeatWindow.SetActive(false);
-            _victoryWindow.SetActive(false);
+            _gameOverWindow.SetActive(false);
             foreach (var enemy in _enemies)
             {
                 enemy.gameObject.SetActive(false);
@@ -87,6 +96,7 @@ namespace ViewImplementation
             var attackerStartPos = attacker.transform.position;
             yield return MoveTo(attacker.transform, defender.transform.position, Render);
             damageDealtCallback();
+            Game.TextDropController.DropText(attacker.Controller.Attack.ToString("0.0"), attacker.transform.position, Color.white);
             yield return MoveTo(attacker.transform, attackerStartPos, Render);
             animationFinishedCallback();
         }
@@ -141,14 +151,14 @@ namespace ViewImplementation
         {
             foreach (var unitView in _activeUnitViews)
             {
-                if (unitView.Controller.State == unitController.State)
+                if (unitView.Controller == unitController)
                     return unitView;
             }
 
             return null;
         }
 
-        public void Restart()
+        public void OnContinueClick()
         {
             Game.ShowCollectionMenu();
         }
@@ -160,7 +170,7 @@ namespace ViewImplementation
                 var heroController = unitView.Controller as HeroController;
                 if (heroController != null)
                 {
-                    OnHeroTap(heroController.HeroState);
+                    OnHeroTap(heroController);
                 }
             }
         }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace RPG.Utils
 {
@@ -29,6 +27,14 @@ namespace RPG.Utils
 			instance.ReturnToPool();
 			_instances.Add(instance);
 			return instance;
+		}
+
+		public IEnumerable<T> GetInstances()
+		{
+			foreach (var instance in _instances)
+			{
+				yield return instance;
+			}
 		}
 
 		public T Pick()
