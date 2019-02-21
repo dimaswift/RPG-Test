@@ -1,10 +1,11 @@
 using RPG.Controller;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace RPG.View
 {
-    public class UnitView : ControlledView<UnitController>, IUnitListener
+    public class UnitView : ControlledView<UnitController>, IUnitListener, IPointerClickHandler
     {
         [SerializeField] HealthBarView _healthBar;
         [SerializeField] Image _bodyImage;
@@ -15,6 +16,8 @@ namespace RPG.View
             Controller.AddListener(this);
             Render();
         }
+        
+        
 
         public void OnHpAmountChanged(float oldHp, float newHp)
         {
@@ -32,5 +35,9 @@ namespace RPG.View
             _bodyImage.color = Game.GetUnitColor(Controller.Config.VisualIndex);
         }
 
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            Game.BattleView.TapOnUnit(this);
+        }
     }
 }

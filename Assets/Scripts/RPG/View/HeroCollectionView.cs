@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using RPG.Model;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace RPG.View
 {
@@ -8,7 +9,9 @@ namespace RPG.View
     {
 
         [SerializeField] HeroInfoPanel _infoPanel;
-
+        [SerializeField] Button _fightButton;
+        [SerializeField] Text _selectionAmountText;
+        
         readonly List<HeroState> _selectedHeroes = new List<HeroState>();
         
         readonly List<UnitCardView> _cards = new List<UnitCardView>();
@@ -18,6 +21,8 @@ namespace RPG.View
             base.OnInit(game);
             GetComponentsInChildren(true, _cards);
             _infoPanel.Hide();
+            _fightButton.gameObject.SetActive(false);
+            OnSelectionChanged();
         }
 
         public override void Render()
@@ -38,10 +43,10 @@ namespace RPG.View
             foreach (var heroState in heroes)
             {
                 var card = i < _cards.Count ? _cards[i] : AddNewCard();
-                var heroConfig = Game.Controller.CollectionManager.GetConfig(heroState.Name);
+                var heroConfig = Game.Controller.CollectionManager.GetConfig(heroState.Id);
                 if (heroConfig == null)
                 {
-                    Debug.LogError("no config with name " + heroState.Name);
+                    Debug.LogError("no config with name " + heroState.Id);
                     continue;
                 }
                 card.SetUp(heroConfig, heroState, this);
@@ -57,14 +62,26 @@ namespace RPG.View
             }
         }
 
+        public void OnFightClick()
+        {
+            Game.StartNextBattle();
+        }
+        
         public void OnSelectionChanged()
         {
             _selectedHeroes.Clear();
             foreach (var card in _cards)
             {
-                if(card.Selected)
-                    _selectedHeroes.Add(card.HeroState);
+                if (card.Selected)
+                {
+                    if (_selectedHeroes.Count < Game.Config.BattleDeckSize)
+                        _selectedHeroes.Add(card.HeroState);
+                    else card.Selected = false;
+                }
             }
+
+            _selectionAmountText.text = string.Format("{0}/{1}", _selectedHeroes.Count, Game.Config.BattleDeckSize);
+            _fightButton.gameObject.SetActive(_selectedHeroes.Count == Game.Config.BattleDeckSize);
         }        
         
         public void ShowHeroInfo(UnitCardView cardView)

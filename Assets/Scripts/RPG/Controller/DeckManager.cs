@@ -24,10 +24,10 @@ namespace RPG.Controller
         {
             foreach (var config in collectionManager.GetCollection())
             {
-                if (_deck.Find(c => c.Name == config.Name) == null)
+                if (_deck.Find(c => c.Id == config.Id) == null)
                 {
                     var state = new HeroState();
-                    state.Name = config.Name;
+                    state.Id = config.Id;
                     state.Attributes = collectionManager.GetLeveledAttributes(config, 1);
                     _deck.Add(state);
                 }

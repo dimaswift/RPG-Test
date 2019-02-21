@@ -7,6 +7,6 @@ namespace RPG.Model
 	{
 		public UnitAttributes Attributes;
 		public int VisualIndex;
-		public string Name;
+		public string Id;
 	}
 }

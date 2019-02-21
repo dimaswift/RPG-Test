@@ -42,7 +42,7 @@ namespace RPG.Controller
 				Kill();
 		}
 
-		public void Damage(float amount)
+		public void TakeDamage(float amount)
 		{
 			if(_state.Attributes.Hp <= 0)
 				return;

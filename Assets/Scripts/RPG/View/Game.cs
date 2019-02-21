@@ -14,6 +14,16 @@ namespace RPG.View
         
         public GameController Controller { get; private set; }
 
+        public HeroCollectionView HeroCollectionView
+        {
+            get { return _heroCollectionView; }
+        }
+        
+        public BattleView BattleView
+        {
+            get { return _battleView; }
+        }
+
         [SerializeField] GameConfig _config;
         
         [SerializeField] Color[] _unitColors;
@@ -44,9 +54,6 @@ namespace RPG.View
             _heroCollectionView.SetUp(Controller.DeckManager.GetDeck());
             
             _heroCollectionView.Show();
-            
-            StartNextBattle();
-
         }
 
         public Color GetUnitColor(int index)
@@ -58,8 +65,8 @@ namespace RPG.View
 
         public void StartNextBattle()
         {
-            Controller.StartBattle();
-            _battleView.SetUp(Controller.BattleController);
+            _heroCollectionView.Hide();
+            Controller.StartBattle(_battleView);
         }
 
         class UnityRandom : IRandomRange
