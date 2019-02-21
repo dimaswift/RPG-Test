@@ -7,12 +7,9 @@ namespace RPG.Controller
     {
         readonly IRandomRange _randomRange;
         readonly GameConfig _config;
-        readonly List<UnitConfig> _enemyCollection;
-        
-        
-        public UnitFactory(GameConfig config, IRandomRange randomRange, IEnumerable<UnitConfig> enemies)
+
+        public UnitFactory(GameConfig config, IRandomRange randomRange)
         {
-            _enemyCollection = new List<UnitConfig>(enemies);
             _config = config;
             _randomRange = randomRange;
         }
@@ -26,10 +23,9 @@ namespace RPG.Controller
             };
         }
         
-        public static List<UnitConfig> CreateRandomUnitCollection(RandomUnitGeneratorConfig generatorConfig,
+        public List<UnitConfig> CreateRandomCollection(RandomUnitGeneratorConfig generatorConfig,
             int size,
             int visualsAmount, 
-            IRandomRange randomRange, 
             string prefix = "Unit")
         {
             var collection = new List<UnitConfig>();
@@ -40,17 +36,17 @@ namespace RPG.Controller
             }
 
             var visualIndex = 0;
-            visualIndexList.Sort((v1, v2) => randomRange.Range(-1, 2));
+            visualIndexList.Sort((v1, v2) => _randomRange.Range(-1, 2));
             for (int i = 0; i < size; i++)
             {
                 var hero = new UnitConfig();
-                hero.Id = GetRandomUnitName(prefix, randomRange);
+                hero.Id = GetRandomUnitName(prefix, _randomRange);
                 while (collection.Find(h => hero.Id == h.Id) != null)
                 {
-                    hero.Id = GetRandomUnitName(prefix, randomRange);
+                    hero.Id = GetRandomUnitName(prefix, _randomRange);
                 }
                 
-                hero.Attributes = GetRandomAttributes(generatorConfig, randomRange, 1);
+                hero.Attributes = GetRandomAttributes(generatorConfig, _randomRange, 1);
                 visualIndex++;
                 if (visualIndex >= visualIndexList.Count)
                     visualIndex = 0;

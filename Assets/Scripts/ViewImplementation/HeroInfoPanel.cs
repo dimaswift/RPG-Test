@@ -5,7 +5,7 @@ using RPG.View;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace RPG.View
+namespace ViewImplementation
 {
 	public class HeroInfoPanel : View
 	{

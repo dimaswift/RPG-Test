@@ -1,4 +1,5 @@
 ﻿using RPG.Model;
+using RPG.View;
 
 namespace RPG.Controller
 {
@@ -32,8 +33,6 @@ namespace RPG.Controller
 				HeroState.Attributes.Attack += _gameConfig.AttackLevelUpMultiplier * HeroState.Attributes.Attack;
 			}
 		}
-	
 	}
-
 }
 

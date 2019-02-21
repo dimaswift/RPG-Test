@@ -1,6 +1,6 @@
-namespace RPG.View
+namespace ViewImplementation
 {
-    public abstract class ControlledView<TController> : View where TController : Controller.Controller
+    public abstract class ControlledView<TController> : View
     {
         public TController Controller { get; private set; }
         

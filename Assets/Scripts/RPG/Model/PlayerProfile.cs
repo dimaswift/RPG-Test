@@ -8,7 +8,7 @@ namespace RPG.Model
 	{
 		public BattleSnapshot LastBattleSnapshot;
 		public List<HeroState> Deck = new List<HeroState>();
-		public List<UnitConfig> Collection = new List<UnitConfig>();
+		public List<UnitConfig> HeroCollection = new List<UnitConfig>();
 		public int BattlesPlayed;
 	}
 }

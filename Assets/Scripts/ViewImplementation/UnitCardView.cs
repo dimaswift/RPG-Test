@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace RPG.View
+namespace ViewImplementation
 {
     public class UnitCardView : View, IPointerDownHandler, IPointerClickHandler, IPointerExitHandler, IPointerUpHandler
     {

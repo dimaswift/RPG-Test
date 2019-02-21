@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using RPG.Model;
+using RPG.View;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace RPG.View
+namespace ViewImplementation
 {
     public class HeroCollectionView : View
     {
@@ -43,7 +44,7 @@ namespace RPG.View
             foreach (var heroState in heroes)
             {
                 var card = i < _cards.Count ? _cards[i] : AddNewCard();
-                var heroConfig = Game.Controller.CollectionManager.GetConfig(heroState.Id);
+                var heroConfig = Game.Controller.HeroCollectionManager.GetConfig(heroState.Id);
                 if (heroConfig == null)
                 {
                     Debug.LogError("no config with name " + heroState.Id);

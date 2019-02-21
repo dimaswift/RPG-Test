@@ -8,12 +8,12 @@ namespace RPG.Model
     public class BattleSnapshot
     {
         public int Level;
-        public List<UnitState> Enemies;
+        public List<UnitConfig> Enemies;
         public List<HeroState> Heroes;
 
         public BattleSnapshot(int level)
         {
-            Enemies = new List<UnitState>();
+            Enemies = new List<UnitConfig>();
             Heroes = new List<HeroState>();
             Level = level;
         }
@@ -21,15 +21,15 @@ namespace RPG.Model
         public BattleSnapshot(BattleController battleController)
         {
             Level = battleController.Level;
-            Enemies = new List<UnitState>();
+            Enemies = new List<UnitConfig>();
             Heroes = new List<HeroState>();
-            foreach (var heroController in battleController.GetHeroes())
+            foreach (var controller in battleController.GetHeroes())
             {
-                Heroes.Add(heroController.HeroState);
+                Heroes.Add(controller.HeroState);
             }
-            foreach (var heroController in battleController.GetEnemies())
+            foreach (var controller in battleController.GetEnemies())
             {
-                Enemies.Add(heroController.State);
+                Enemies.Add(controller.Config);
             }
         }
     }

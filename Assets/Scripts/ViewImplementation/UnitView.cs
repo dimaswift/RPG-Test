@@ -1,11 +1,12 @@
 using RPG.Controller;
+using RPG.View;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace RPG.View
+namespace ViewImplementation
 {
-    public class UnitView : ControlledView<UnitController>, IUnitListener, IPointerClickHandler
+    public class UnitView : ControlledView<UnitController>, IUnitView, IPointerClickHandler
     {
         [SerializeField] HealthBarView _healthBar;
         [SerializeField] Image _bodyImage;
@@ -13,12 +14,10 @@ namespace RPG.View
         protected override void OnSetUp()
         {
             base.OnSetUp();
-            Controller.AddListener(this);
+            Controller.SetView(this);
             Render();
         }
         
-        
-
         public void OnHpAmountChanged(float oldHp, float newHp)
         {
             _healthBar.SetHp(newHp / Controller.Config.Attributes.Hp);

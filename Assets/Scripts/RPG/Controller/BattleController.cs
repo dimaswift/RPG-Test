@@ -1,32 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using RPG.Model;
+using RPG.View;
 
 namespace RPG.Controller
 {
-    public class BattleController
+    public class BattleController : Controller<IBattleView>
     {
-        public event Action OnDefeat;
-        public event Action OnVictory;
-        
         public readonly int Level;
+        
         readonly List<HeroController> _heroes;
         readonly List<UnitController> _enemies;
         readonly GameController _gameController;
-        readonly IBattleView _view;
 
         bool _attackInProcess;
 
-        public BattleController(IEnumerable<HeroController> heroes, 
-            IEnumerable<UnitController> enemies, IBattleView view,
+        public BattleController(GameController gameController, 
+            IEnumerable<HeroController> heroes, 
+            IEnumerable<UnitController> enemies,
             int level)
         {
-            _view = view;
+            _gameController = gameController;
             Level = level;
             _heroes = new List<HeroController>(heroes);
             _enemies = new List<UnitController>(enemies);
-            _view.OnHeroTap += OnHeroTap;
-            view.PrepareBattle(_heroes, _enemies);
+        }
+
+        public void PrepareBattle()
+        {
+            View.PrepareBattle(_heroes, _enemies);
+            _attackInProcess = false;
         }
 
         public IEnumerable<HeroController> GetHeroes()
@@ -44,6 +47,11 @@ namespace RPG.Controller
                 yield return enemy;
             }
         }
+        
+        protected override void OnViewSetUp()
+        {
+            View.OnHeroTap += OnHeroTap;
+        }
 
         void OnHeroTap(HeroState heroState)
         {
@@ -57,7 +65,25 @@ namespace RPG.Controller
             if(defender == null)
                 return;
             _attackInProcess = true;
-            _view.StartAttack(attacker.State, defender.State, () => ProcessAttack(attacker, defender));
+            View.StartAttack(attacker, defender,
+                () => ResolveDamage(attacker, defender),
+                () => DoCounterAttack(defender));
+        }
+
+        void DoCounterAttack(UnitController enemy)
+        {
+            if(enemy.State.Attributes.Hp <= 0)
+                return;
+            _attackInProcess = true;
+            
+            var heroToAttack = _heroes.Find(h => h.HeroState.Attributes.Hp > 0);
+            
+            if (heroToAttack != null)
+            {
+                View.StartAttack(enemy, heroToAttack, 
+                    () => ResolveDamage(enemy, heroToAttack),
+                    () => { _attackInProcess = false; });
+            } 
         }
 
         UnitController GetEnemyForAttack()
@@ -65,17 +91,10 @@ namespace RPG.Controller
             return _enemies.Count > 0 ? _enemies[0] : null;
         }
         
-        void ProcessAttack(UnitController attacker, UnitController defender)
+        void ResolveDamage(UnitController attacker, UnitController defender)
         {
-            _attackInProcess = false;
             defender.TakeDamage(attacker.State.Attributes.Attack);
             CheckBattleResult();
-            _view.EndAttack(attacker.State, defender.State);
-            
-            if (attacker is HeroController)
-            {
-                _view.StartAttack(defender.State, attacker.State, () => ProcessAttack(defender, attacker));
-            }
         }
 
         HeroController GetHeroController(HeroState state)
@@ -90,6 +109,8 @@ namespace RPG.Controller
 
             return null;
         }
+        
+        
         
         void CheckBattleResult()
         {
@@ -125,30 +146,28 @@ namespace RPG.Controller
 
         void ProcessDefeat()
         {
-            _view.OnHeroTap -= OnHeroTap;
-            _view.ProcessDefeat();
-            if (OnDefeat != null)
-                OnDefeat();
+            View.OnHeroTap -= OnHeroTap;
+            View.ProcessDefeat();
+            _gameController.ProcessBattleEnd(false);
         }
 
         void ProcessVictory()
         {
-            _view.OnHeroTap -= OnHeroTap;
+            View.OnHeroTap -= OnHeroTap;
             foreach (var hero in _heroes)
             {
                 if(hero.State.Attributes.Hp <= 0)
                     continue;
                 hero.AddExperience();
             }
-            _view.ProcessVictory();
-            if (OnVictory != null)
-                OnVictory();
+            View.ProcessVictory();
+            _gameController.ProcessBattleEnd(true);
         }
 
         ~BattleController()
         {
-            if(_view != null)
-                _view.OnHeroTap -= OnHeroTap;
+            if(View != null)
+                View.OnHeroTap -= OnHeroTap;
         }
         
         

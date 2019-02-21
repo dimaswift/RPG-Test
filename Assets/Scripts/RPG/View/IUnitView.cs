@@ -1,6 +1,6 @@
-﻿namespace RPG.Controller
+﻿namespace RPG.View
 {
-    public interface IUnitListener
+    public interface IUnitView : IView
     {
         void OnHpAmountChanged(float oldHp, float newHp);
         void OnDeath();

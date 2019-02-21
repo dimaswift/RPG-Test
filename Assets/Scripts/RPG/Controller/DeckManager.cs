@@ -6,10 +6,14 @@ namespace RPG.Controller
     public class DeckManager
     {
         readonly List<HeroState> _deck;
+        readonly UnitCollectionManager _collectionManager;
+        readonly UnitFactory _unitFactory;
         
-        public DeckManager(IEnumerable<HeroState> deck)
+        public DeckManager(IEnumerable<HeroState> deck, UnitCollectionManager collectionManager, UnitFactory unitFactory)
         {
             _deck = new List<HeroState>(deck);
+            _collectionManager = collectionManager;
+            _unitFactory = unitFactory;
         }
 
         public IEnumerable<HeroState> GetDeck()
@@ -20,15 +24,15 @@ namespace RPG.Controller
             }
         }
 
-        public void AddNewHeroToTheDeck(HeroesCollectionManager collectionManager)
+        public void AddNewHeroToTheDeck()
         {
-            foreach (var config in collectionManager.GetCollection())
+            foreach (var config in _collectionManager.GetCollection())
             {
                 if (_deck.Find(c => c.Id == config.Id) == null)
                 {
                     var state = new HeroState();
                     state.Id = config.Id;
-                    state.Attributes = collectionManager.GetLeveledAttributes(config, 1);
+                    state.Attributes = _unitFactory.GetLeveledAttributes(config, 1);
                     _deck.Add(state);
                 }
             }

@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using RPG.Controller;
 using RPG.Model;
 
-namespace RPG.Controller
+namespace RPG.View
 {
-    public interface IBattleView
+    public interface IBattleView : IView
     {
         event Action<HeroState> OnHeroTap;
-        void StartAttack(UnitState attacker, UnitState defender, Action onAttackFinish);
-        void EndAttack(UnitState attacker, UnitState defender);
+        void StartAttack(UnitController attacker, UnitController defender, Action damageDealtCallback, Action animationFinishedCallback);
         void ProcessDefeat();
         void ProcessVictory();
         void PrepareBattle(IEnumerable<HeroController> heroes, IEnumerable<UnitController> enemies);

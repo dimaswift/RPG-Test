@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using RPG.Controller;
 using RPG.Model;
+using RPG.View;
 using UnityEngine;
 
-namespace RPG.View
+namespace ViewImplementation
 {
     public class Game : MonoBehaviour
     {
@@ -40,7 +41,7 @@ namespace RPG.View
         public void Init()
         {
             var profileProvider = new PlayerPrefsProfileProvider("profile");
-         
+            profileProvider.Delete();
             Controller = new GameController(_config, profileProvider, new UnityRandom());
 
             var views = FindObjectsOfType<View>();
@@ -69,13 +70,19 @@ namespace RPG.View
             Controller.StartBattle(_battleView);
         }
 
-        class UnityRandom : IRandomRange
+        public class UnityRandom : IRandomRange
         {
             public int Range(int min, int max)
             {
                 return Random.Range(min, max);
             }
         }
-        
+
+        public void ShowCollectionMenu()
+        {
+            _battleView.Hide();
+            _heroCollectionView.SetUp(Controller.DeckManager.GetDeck());
+            _heroCollectionView.Show();
+        }
     }
 }

@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace RPG.Controller
 {
-    public abstract class ObservableController<T> : Controller
+    public abstract class ViewedController<T>
     { 
         readonly List<T> _listeners;
 
-        protected ObservableController(params T[] listeners)
+        protected ViewedController(params T[] listeners)
         {
             _listeners = new List<T>(listeners);
         }

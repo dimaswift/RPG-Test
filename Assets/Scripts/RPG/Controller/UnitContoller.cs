@@ -1,8 +1,9 @@
 ﻿using RPG.Model;
+using RPG.View;
 
 namespace RPG.Controller
 {
-	public class UnitController : ObservableController<IUnitListener>
+	public class UnitController : Controller<IUnitView>
 	{
 		public UnitState State
 		{
@@ -32,12 +33,8 @@ namespace RPG.Controller
 			var prevHp = _state.Attributes.Hp;
 			
 			_state.Attributes.Hp = hp;
+			View.OnHpAmountChanged(prevHp, hp);
 
-			foreach (var unitListener in GetListeners())
-			{
-				unitListener.OnHpAmountChanged(prevHp, hp);
-			}
-			
 			if(_state.Attributes.Hp <= 0)
 				Kill();
 		}
@@ -51,14 +48,8 @@ namespace RPG.Controller
 
 		public void Kill()
 		{
-			if(_state.Attributes.Hp <= 0)
-				return;
 			_state.Attributes.Hp = 0;
-
-			foreach (var unitListener in GetListeners())
-			{
-				unitListener.OnDeath();
-			}
+			View.OnDeath();
 		}
 	}
 }
