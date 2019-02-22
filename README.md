@@ -2,6 +2,8 @@
 
 <b>Unity version used</b>: 2017.4.11f1
 
+Android Build - https://github.com/dimaswift/RPG-Test/blob/master/dimaswift-rpg-test.apk
+
 For this test I used a custom implementation of the MVC pattern, observer pattern, factory pattern, etc.
 
 I separated the logic from the Unity engine completely by abstracting the View,
