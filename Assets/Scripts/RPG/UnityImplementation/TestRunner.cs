@@ -1,5 +1,4 @@
-﻿using System;
-using RPG.UnitTests;
+﻿using RPG.UnitTests;
 using UnityEngine;
 
 namespace RPG.UnityImplementation

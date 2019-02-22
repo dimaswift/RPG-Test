@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using NUnit.Framework;
 using RPG.Controller;
 using RPG.Model;
+using UnityEngine.Assertions;
 
 namespace RPG.UnitTests
 {
@@ -57,7 +57,7 @@ namespace RPG.UnitTests
 		{
 			var profile = profileProvider.LoadProfile();
 			
-			Assert.NotZero(profile.Deck.Count);
+			Assert.IsFalse(profile.Deck.Count == 0);
 			
 			var oldAttack = profile.Deck[0].Attack;
 
@@ -66,7 +66,7 @@ namespace RPG.UnitTests
 				RunCompleteBattle(gameController, battleView, testLogger);
 			}
 
-			Assert.AreEqual(profile.Deck[0].Attack, (oldAttack + oldAttack * config.LevelUpStatsMultiplier), 0.00001f);
+			Assert.AreApproximatelyEqual(profile.Deck[0].Attack, (oldAttack + oldAttack * config.LevelUpStatsMultiplier), 0.00001f);
 		}
 
 		void TestDamage(GameController gameController, DummyBattleView battleView, ITestLogger testLogger)
@@ -80,17 +80,17 @@ namespace RPG.UnitTests
 			
 			var hero = gameController.GetAliveHeroController();
 
-			Assert.NotNull(hero);
+			Assert.IsNotNull(hero);
 
 			var enemy = gameController.GetAliveEnemyController();
 			
-			Assert.NotNull(enemy);
+			Assert.IsNotNull(enemy);
 
 			var enemyHp = enemy.Hp;
 
 			battleView.SimulateHeroTap(hero);
 
-			Assert.AreEqual(enemy.Hp,enemyHp - hero.Attack, .00001f);
+			Assert.AreApproximatelyEqual(enemy.Hp,enemyHp - hero.Attack, .00001f);
 
 			testLogger.Log("TestDamage successful!");
 		}

@@ -1,7 +1,5 @@
-using System;
 using RPG.Controller;
 using RPG.Model;
-using RPG.UnitTests;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -52,8 +50,6 @@ namespace RPG.UnityImplementation
         {
             Init();
         }
-
-       
         
         public void Init()
         {

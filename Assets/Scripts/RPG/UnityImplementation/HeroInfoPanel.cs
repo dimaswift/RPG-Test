@@ -17,11 +17,13 @@ namespace RPG.UnityImplementation
 		HeroData _data;
 		
 		Coroutine _currentAnimation;
-		
+		Vector2 _viewportSize;
 		protected override void OnInit(Game game)
 		{
 			base.OnInit(game);
 			gameObject.SetActive(false);
+			var rect = GetComponent<RectTransform>();
+			_viewportSize = new Vector2(rect.rect.width, rect.rect.height);
 		}
 
 		public void SetUp(HeroData data)
@@ -36,6 +38,15 @@ namespace RPG.UnityImplementation
 				return;
 
 			_currentAnimation = StartCoroutine(ShowingAnimation(false));
+		}
+
+		public void Show(Vector3 position)
+		{
+			if (position.x > Screen.width / 2)
+				position.x -= _viewportSize.x * .75f;
+			else position.x += _viewportSize.x  * .75f;
+			transform.position = position;
+			Show();
 		}
 		
 		public override void Show()

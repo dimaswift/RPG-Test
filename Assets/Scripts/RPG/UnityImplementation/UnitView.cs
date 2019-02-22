@@ -25,7 +25,7 @@ namespace RPG.UnityImplementation
             base.OnSetUp();
             Controller.SetView(this);
             _heroController = Controller as HeroController;
-            if (_heroController != null && _infoTrigger)
+            if (_infoTrigger != null && _heroController != null && _infoTrigger)
             {
                 _infoTrigger.SetHeroData(_heroController.HeroData);
                 _heroController.OnLevelUp += OnHeroLevelUp;
@@ -59,7 +59,7 @@ Attack + {1:0.0}", extraHp, extraAttack), transform.position, Color.green);
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if(_infoTrigger.IsHeroInfoPanelActive())
+            if(_infoTrigger != null && _infoTrigger.IsHeroInfoPanelActive())
                 return;
             Game.BattleView.TapOnUnit(this);
         }

@@ -10,9 +10,9 @@ namespace RPG.UnityImplementation
 		float _tapTime;
 		Coroutine _waitForShowInfoRoutine;
 		PointerEventData _pointer;
-
+		Vector2 _panelExtends;
 		HeroData _data;
-		
+
 		public void SetHeroData(HeroData heroData)
 		{
 			_data = heroData;
@@ -39,9 +39,9 @@ namespace RPG.UnityImplementation
 		IEnumerator WaitForShowInfo()
 		{
 			yield return new WaitForSeconds(1);
-			Game.HeroInfoPanel.transform.position = _pointer.position;
+		
 			Game.HeroInfoPanel.SetUp(_data);
-			Game.HeroInfoPanel.Show();
+			Game.HeroInfoPanel.Show(transform.position);
 			StopWaitForShowInfo();
 		}
 
