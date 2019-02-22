@@ -9,6 +9,8 @@ For this test I used a custom implementation of the MVC pattern, observer patter
 I separated the logic from the Unity engine completely by abstracting the View,
 so it can be run on the console application, for example.
 
+Average time spent on project: about 14 hours.
+
 <b>Basic project structure:</b>
 ____
     |
