@@ -1,7 +1,6 @@
 using RPG.Controller;
 using RPG.Model;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace RPG.UnityImplementation
 {
@@ -15,11 +14,6 @@ namespace RPG.UnityImplementation
         public TextDropController TextDropController
         {
             get { return _textDropController; }
-        }
-
-        public HeroCollectionView HeroCollectionView
-        {
-            get { return _heroCollectionView; }
         }
         
         public HeroInfoPanel HeroInfoPanel
@@ -51,7 +45,7 @@ namespace RPG.UnityImplementation
             Init();
         }
         
-        public void Init()
+        void Init()
         {
             var profileProvider = new PlayerPrefsProfileProvider("profile");
 
@@ -86,14 +80,6 @@ namespace RPG.UnityImplementation
         {
             if (_controller != null)
                 _controller.SaveProfile();
-        }
-
-        public class UnityRandom : IRandomRange
-        {
-            public int Range(int min, int max)
-            {
-                return Random.Range(min, max);
-            }
         }
 
         public void ShowCollectionMenu()
