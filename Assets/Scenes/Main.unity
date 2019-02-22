@@ -2673,7 +2673,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  _infoPanel: {fileID: 0}
   _attackTime: 0.25
 --- !u!1 &990569709
 GameObject:
@@ -2875,6 +2874,7 @@ MonoBehaviour:
   - {r: 0.88235295, g: 0.2595155, b: 0.5734254, a: 1}
   - {r: 0.88235295, g: 0.2595155, b: 0.36415234, a: 1}
   _battleView: {fileID: 982784122}
+  _heroInfoPanel: {fileID: 1503086966}
   _heroCollectionView: {fileID: 98910407}
   _textDropController: {fileID: 1561170148}
 --- !u!114 &1033841974

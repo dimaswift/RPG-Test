@@ -5,9 +5,8 @@ using UnityEngine.EventSystems;
 
 namespace RPG.UnityImplementation
 {
-	public class HeroInfoTrigger : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler, IPointerExitHandler
+	public class HeroInfoTrigger : View, IPointerDownHandler, IDragHandler, IPointerUpHandler, IPointerExitHandler
 	{
-		HeroInfoPanel _infoPanel;
 		float _tapTime;
 		Coroutine _waitForShowInfoRoutine;
 		PointerEventData _pointer;
@@ -17,11 +16,6 @@ namespace RPG.UnityImplementation
 		public void SetHeroData(HeroData heroData)
 		{
 			_data = heroData;
-		}
-
-		void Awake()
-		{
-			_infoPanel = FindObjectOfType<HeroInfoPanel>();
 		}
 
 		public void OnPointerDown(PointerEventData eventData)
@@ -45,9 +39,9 @@ namespace RPG.UnityImplementation
 		IEnumerator WaitForShowInfo()
 		{
 			yield return new WaitForSeconds(1);
-			_infoPanel.transform.position = _pointer.position;
-			_infoPanel.SetUp(_data);
-			_infoPanel.Show();
+			Game.HeroInfoPanel.transform.position = _pointer.position;
+			Game.HeroInfoPanel.SetUp(_data);
+			Game.HeroInfoPanel.Show();
 			StopWaitForShowInfo();
 		}
 
@@ -58,24 +52,29 @@ namespace RPG.UnityImplementation
 
 		public bool IsHeroInfoPanelActive()
 		{
-			return _infoPanel.gameObject.activeSelf;
+			return Game.HeroInfoPanel.gameObject.activeSelf;
 		}
 
 		public void HideHeroInfo()
 		{
-			_infoPanel.Hide();
+			Game.HeroInfoPanel.Hide();
 		}
 
 		public void OnPointerUp(PointerEventData eventData)
 		{
 			StopWaitForShowInfo();
-			_infoPanel.Hide();
+			Game.HeroInfoPanel.Hide();
 		}
 
 		public void OnPointerExit(PointerEventData eventData)
 		{
 			StopWaitForShowInfo();
-			_infoPanel.Hide();
+			Game.HeroInfoPanel.Hide();
+		}
+
+		public override void Render()
+		{
+			
 		}
 	}
 

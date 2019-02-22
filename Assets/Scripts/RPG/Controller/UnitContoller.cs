@@ -36,7 +36,8 @@ namespace RPG.Controller
 			
 			var prevHp = Hp;
 			Hp = hp;
-			View.OnHpAmountChanged(prevHp, hp);
+			if(View != null)
+				View.OnHpAmountChanged(prevHp, hp);
 
 			if(Hp <= 0)
 				Kill();
@@ -45,7 +46,8 @@ namespace RPG.Controller
 		void Kill()
 		{
 			Hp = 0;
-			View.OnDeath();
+			if(View != null)
+				View.OnDeath();
 		}
 	}
 }

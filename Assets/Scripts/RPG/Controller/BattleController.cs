@@ -31,6 +31,28 @@ namespace RPG.Controller
             _randomRange = randomRange;
         }
 
+        public IEnumerable<HeroController> GetHeroControllers()
+        {
+            foreach (var heroController in _heroes)
+            {
+                yield return heroController;
+            }
+        }
+        
+        public IEnumerable<UnitController> GetEnemyControllers()
+        {
+            foreach (var enemyController in _enemies)
+            {
+                yield return enemyController;
+            }
+        }
+        
+        public void PrepareBattle()
+        {
+            View.PrepareBattle(_heroes, _enemies);
+            _attackInProcess = false;
+        }
+
         List<UnitController> CreateEnemies()
         {
             var enemies = new List<UnitController>(_gameConfig.EnemiesAmount);
@@ -57,12 +79,6 @@ namespace RPG.Controller
                 heroes.Add(heroController);
             }
             return heroes;
-        }
-
-        public void PrepareBattle()
-        {
-            View.PrepareBattle(_heroes, _enemies);
-            _attackInProcess = false;
         }
 
         protected override void OnViewSetUp()

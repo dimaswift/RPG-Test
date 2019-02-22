@@ -14,8 +14,8 @@ namespace RPG.Model
 		public int UnitVisualsAmount = 10;
 		public int FreeHeroPrizeFrequency = 5;
 		
-		public RandomUnitGeneratorConfig HeroGeneratorConfig;
-		public RandomUnitGeneratorConfig EnemyGeneratorConfig;
+		public RandomUnitGeneratorConfig HeroGeneratorConfig = new RandomUnitGeneratorConfig();
+		public RandomUnitGeneratorConfig EnemyGeneratorConfig = new RandomUnitGeneratorConfig();
 		
 		public int XpPerLevel = 5;
 	}

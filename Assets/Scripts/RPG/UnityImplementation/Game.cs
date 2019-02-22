@@ -1,6 +1,9 @@
+using System;
 using RPG.Controller;
 using RPG.Model;
+using RPG.UnitTests;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace RPG.UnityImplementation
 {
@@ -21,6 +24,11 @@ namespace RPG.UnityImplementation
             get { return _heroCollectionView; }
         }
         
+        public HeroInfoPanel HeroInfoPanel
+        {
+            get { return _heroInfoPanel; }
+        }
+        
         public BattleView BattleView
         {
             get { return _battleView; }
@@ -31,6 +39,8 @@ namespace RPG.UnityImplementation
         [SerializeField] Color[] _unitColors;
 
         [SerializeField] BattleView _battleView;
+        
+        [SerializeField] HeroInfoPanel _heroInfoPanel;
 
         [SerializeField] HeroCollectionView _heroCollectionView;
 
@@ -43,21 +53,22 @@ namespace RPG.UnityImplementation
             Init();
         }
 
+       
+        
         public void Init()
         {
             var profileProvider = new PlayerPrefsProfileProvider("profile");
-            profileProvider.Delete();
+
             _controller = new GameController(_config, profileProvider, new UnityRandom());
 
-            var views = FindObjectsOfType<View>();
+            var views = GetComponentsInChildren<View>(true);
             
             foreach (var view in views)
             {
                 view.Init(this);
-                view.Hide();
             }
 
-            _heroCollectionView.SetUp(_controller.PlayerProfile.Deck);
+            _heroCollectionView.SetUp(_controller.GetPlayerDeck());
             
             _heroCollectionView.Show();
         }
@@ -92,7 +103,7 @@ namespace RPG.UnityImplementation
         public void ShowCollectionMenu()
         {
             _battleView.Hide();
-            _heroCollectionView.SetUp(_controller.PlayerProfile.Deck);
+            _heroCollectionView.SetUp(_controller.GetPlayerDeck());
             _heroCollectionView.Show();
         }
     }

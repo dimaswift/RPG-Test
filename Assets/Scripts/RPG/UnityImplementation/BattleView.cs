@@ -15,8 +15,7 @@ namespace RPG.UnityImplementation
         [SerializeField] GameObject _gameOverWindow;
         [SerializeField] Text _gameOverMessageText;
         [SerializeField] AnimationCurve _attackCurve;
-        [SerializeField] HeroInfoPanel _infoPanel;
-        
+
         [SerializeField] float _attackTime = .5f;
 
         public event Action<HeroController> OnHeroTap;
