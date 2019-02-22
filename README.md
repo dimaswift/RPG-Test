@@ -28,10 +28,14 @@ ____
 
 <b>Usage:</b>
 
-Entry point for the game is GameController that needs an implementation of the few interfaces.
+Main class of the game is GameController that depends on the GameConfig class and few interfaces.
 
 Since the logic is completely separated from Unity, it's easily tested. The example of such unit tests is
 inside <b>UnitTests</b> namespace.
 
-The code structure is pretty obvious and doesn't need any comments, in my opinion.
+Inside the Unity inplementation - entry point is the Game class that holds references to the Views.
 
+Game class initializes GameController, Unity Views implementations, hooks them all together, holds all the references needed and is responsible for visualization of the units.
+It also has GameConfig as an exposed field in the inspector.
+
+In order to unit test the game inside Unity, just enable TestRunner object in the Main scene, and read the logs.
